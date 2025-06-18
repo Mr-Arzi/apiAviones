@@ -94,7 +94,7 @@ public class AvionController {
         }
 
         avionRepository.deleteById(id);
-        return ResponseEntity.ok("Helicóptero eliminado con éxito.");
+        return ResponseEntity.ok("avion eliminado con éxito.");
     }
 
     private User getValidUser(String userId) {

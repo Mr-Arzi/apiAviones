@@ -1,5 +1,6 @@
 package com.aviones.proyectofinal.security;
 
+import org.springframework.http.HttpMethod;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -64,12 +65,17 @@ public class WebSecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/api/avion/**").permitAll()
-                        .requestMatchers("/api/reactions/**").permitAll()
-                        .requestMatchers("/api/comentarios/**").permitAll()
-                        .anyRequest().authenticated());
+                .authorizeHttpRequests(auth -> auth
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers(HttpMethod.GET, "/api/avion/**").permitAll()
+    .requestMatchers(HttpMethod.GET, "/api/reactions/**").permitAll()
+    .requestMatchers(HttpMethod.GET, "/api/comentarios/**").permitAll()
+    .requestMatchers(HttpMethod.POST, "/api/avion/create").authenticated()
+    .requestMatchers(HttpMethod.POST, "/api/reactions/create").authenticated()
+    .requestMatchers(HttpMethod.POST, "/api/comentarios/create").authenticated()
+    .anyRequest().authenticated()
+);
+
 
         http.authenticationProvider(authenticationProvider());
 
