@@ -13,7 +13,7 @@ public class CorsConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-          .allowedOriginPatterns("http://localhost:4200", "https://aviongram.onrender.com") // <-- agrega tu dominio final
+          .allowedOriginPatterns("http://localhost:4200") // <-- agrega tu dominio final
           .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
           .allowedHeaders("*")
           .allowCredentials(true)
