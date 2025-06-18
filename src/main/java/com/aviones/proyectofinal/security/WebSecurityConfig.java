@@ -61,26 +61,21 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/api/auth/**").permitAll()
-    .requestMatchers(HttpMethod.GET, "/api/avion/**").permitAll()
-    .requestMatchers(HttpMethod.GET, "/api/reactions/**").permitAll()
-    .requestMatchers(HttpMethod.GET, "/api/comentarios/**").permitAll()
-    .requestMatchers(HttpMethod.POST, "/api/avion/create").authenticated()
-    .requestMatchers(HttpMethod.POST, "/api/reactions/create").authenticated()
-    .requestMatchers(HttpMethod.POST, "/api/comentarios/create").authenticated()
-    .anyRequest().authenticated()
-);
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(csrf -> csrf.disable())
+        .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 permite preflight CORS
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/avion/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/avion/create").authenticated()
+            .anyRequest().authenticated()
+        );
 
+    http.authenticationProvider(authenticationProvider());
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.authenticationProvider(authenticationProvider());
-
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+    return http.build();
+}
 }
