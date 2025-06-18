@@ -1,6 +1,5 @@
 package com.aviones.proyectofinal.security;
 
-import org.springframework.http.HttpMethod;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,21 +60,21 @@ public class WebSecurityConfig {
     }
 
     @Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
-        .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 👈 permite preflight CORS
-            .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/avion/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/avion/create").authenticated()
-            .anyRequest().authenticated()
-        );
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/api/avion/**").permitAll()
+                        .requestMatchers("/api/reactions/**").permitAll()
+                        .requestMatchers("/api/comentarios/**").permitAll()
+                        .anyRequest().authenticated());
 
-    http.authenticationProvider(authenticationProvider());
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(authenticationProvider());
 
-    return http.build();
-}
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }
