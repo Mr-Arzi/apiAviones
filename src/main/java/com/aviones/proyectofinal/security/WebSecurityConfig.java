@@ -1,6 +1,5 @@
 package com.aviones.proyectofinal.security;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 import com.aviones.proyectofinal.security.jwt.AuthEntryPointJwt;
 import com.aviones.proyectofinal.security.jwt.AuthTokenFilter;
 import com.aviones.proyectofinal.security.services.UserDetailsServiceImpl;
@@ -23,7 +21,6 @@ import com.aviones.proyectofinal.security.services.UserDetailsServiceImpl;
 // (securedEnabled = true,
 // jsr250Enabled = true,
 // prePostEnabled = true) // by default
-
 
 @Configuration
 @EnableMethodSecurity
@@ -64,7 +61,10 @@ public class WebSecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // ← Agrega
+                                                                                                         // esto
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/avion/**").permitAll()
                         .requestMatchers("/api/reactions/**").permitAll()
@@ -72,7 +72,6 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
-
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
