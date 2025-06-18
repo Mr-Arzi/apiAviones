@@ -42,11 +42,12 @@ public class AvionController {
     @Autowired
     private UserRepository userRepository;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/all")
     public Page<Avion> getAllAviones(Pageable pageable) {
         return avionRepository.findAll(pageable);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public Avion createAvion(@Valid @RequestBody Avion avion) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
